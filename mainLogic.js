@@ -1,7 +1,6 @@
 const baseUrl = "https://tarmeezacademy.com/api/v1"
 
 
-
 function setupUI() {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
@@ -44,6 +43,8 @@ function loginBtnClicked() {
     const username = document.getElementById("login-username-input").value;
     const password = document.getElementById("login-password-input").value;
     console.log("username is " + username + " password is " + password);
+
+    toggleLoader(true);
     axios.post(`${baseUrl}/login`, {
             "username": username,
             "password": password
@@ -61,6 +62,9 @@ function loginBtnClicked() {
     .catch(error => {
         showAlert(error.response.data.message, 'danger');
     })
+    .finally(() => {
+        toggleLoader(false);
+    });
 }
 
 function registerBtnClicked() {
@@ -80,6 +84,8 @@ function registerBtnClicked() {
     };
 
     console.log("name is " + name + " username is " + username + " password is " + password);
+
+    toggleLoader(true);
     axios.post(`${baseUrl}/register`, formData, 
         {
             "headers": headers
@@ -98,6 +104,9 @@ function registerBtnClicked() {
     .catch(error => {
         showAlert(error.response.data.message, 'danger');
     })
+    .finally(() => {
+        toggleLoader(false);
+    });
 }
 
 function logout() {
@@ -133,4 +142,17 @@ function showAlert(message, type) {
     //     alertToHide.close();
     // },3000); 
     
+}
+
+
+
+function toggleLoader(show = true) {
+    const loaderElm = document.getElementById("loader");
+    if (show) {
+        loaderElm.style.visibility = 'visible';
+    }
+    else {
+        loaderElm.style.visibility = 'hidden';
+    }
+        
 }

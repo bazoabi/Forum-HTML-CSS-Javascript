@@ -1,6 +1,5 @@
 setupUI();
 
-
 const user = JSON.parse(localStorage.getItem('user'));
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -21,6 +20,7 @@ getUserInfo(validUserId);
 
 function getUserInfo(userId) {
 
+    toggleLoader(true);
     axios.get(`${baseUrl}/users/${userId}`)
     .then((response) => {
         const user = response.data.data;
@@ -35,6 +35,9 @@ function getUserInfo(userId) {
     })
     .catch(function (error) {
         alert(error);
+    })
+    .finally(() => {
+        toggleLoader(false);
     });
 }
 
@@ -43,6 +46,7 @@ function getPostsWithUserId(userId) {
 
     console.log("userId is: " + userId);
 
+    toggleLoader(true);
     axios.get(`${baseUrl}/users/${userId}/posts`)
     .then((response) => {
         console.log("the data is: " + response.data.data);
@@ -117,6 +121,9 @@ function getPostsWithUserId(userId) {
     })
     .catch(function (error) {
         alert(error);
+    })
+    .finally(() => {
+        toggleLoader(false);
     });
 }
 
@@ -156,6 +163,7 @@ function editPostBtnClicked(postObject) {
   
       url = `${baseUrl}/posts/${postId}`;
   
+      toggleLoader(true);
       axios.delete(url, {
           "headers": headers
       })
@@ -175,6 +183,9 @@ function editPostBtnClicked(postObject) {
           const errMsg = error.response.data.message ?? error.response.data.error_message;
           showAlert(errMsg, 'danger');
       })
+      .finally(() => {
+        toggleLoader(false);
+    });
   }
   
   
@@ -213,6 +224,7 @@ function editPostBtnClicked(postObject) {
     if (isCreate) {
         url = `${baseUrl}/posts`;
 
+        toggleLoader(true);
         axios.post(url, formData, 
             {
                 "headers": headers
@@ -233,12 +245,16 @@ function editPostBtnClicked(postObject) {
                 const errMsg = error.response.data.message ?? error.response.data.error_message;
                 showAlert(errMsg, 'danger');
             })
+            .finally(() => {
+                toggleLoader(false);
+            });
 
 
     } else {
         formData.append("_method", "put");
         url = `${baseUrl}/posts/${postId}`;
 
+        toggleLoader(true);
         axios.post(url, formData, 
             {
                 "headers": headers
@@ -259,12 +275,26 @@ function editPostBtnClicked(postObject) {
                 const errMsg = error.response.data.message ?? error.response.data.error_message;
                 showAlert(errMsg, 'danger');
             })
+            .finally(() => {
+                toggleLoader(false);
+            });
     }
 
     
     
 }
 
+
+function toggleLoader(show = true) {
+    const loaderElm = document.getElementById("loader");
+    if (show) {
+        loaderElm.style.visibility = 'visible';
+    }
+    else {
+        loaderElm.style.visibility = 'hidden';
+    }
+        
+}
 
 
   // TODO: extract these dupped funcs from homeScripts.js

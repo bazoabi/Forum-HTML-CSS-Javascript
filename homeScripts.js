@@ -157,6 +157,7 @@ function deletePostConfirmationClicked() {
 
     url = `${baseUrl}/posts/${postId}`;
 
+    toggleLoader(true);
     axios.delete(url, {
         "headers": headers
     })
@@ -176,6 +177,9 @@ function deletePostConfirmationClicked() {
         const errMsg = error.response.data.message ?? error.response.data.error_message;
         showAlert(errMsg, 'danger');
     })
+    .finally(() => {
+        toggleLoader(false);
+    });
 }
 
 
@@ -218,7 +222,7 @@ function createPostClicked() {
     let url = ``;
     if (isCreate) {
         url = `${baseUrl}/posts`;
-
+        toggleLoader(true);
         axios.post(url, formData, 
             {
                 "headers": headers
@@ -239,12 +243,15 @@ function createPostClicked() {
                 const errMsg = error.response.data.message ?? error.response.data.error_message;
                 showAlert(errMsg, 'danger');
             })
+            .finally(() => {
+                toggleLoader(false);
+            });
 
 
     } else {
         formData.append("_method", "put");
         url = `${baseUrl}/posts/${postId}`;
-
+        toggleLoader(true);
         axios.post(url, formData, 
             {
                 "headers": headers
@@ -265,11 +272,15 @@ function createPostClicked() {
                 const errMsg = error.response.data.message ?? error.response.data.error_message;
                 showAlert(errMsg, 'danger');
             })
+            .finally(() => {
+                toggleLoader(false);
+            });
     }
 
     
     
 }
+
 
 
 function toggleLoader(show = true) {
